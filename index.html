@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#10070b">
+  <title>Just One Little Challenge ❤️</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div class="hearts" aria-hidden="true"></div>
+
+  <main class="shell">
+    <header class="topline">
+      <span class="tiny-heart">♥</span>
+      <span>PRIVATE LOVE CHALLENGE</span>
+      <span class="tiny-heart">♥</span>
+    </header>
+
+    <section class="intro" id="intro">
+      <p class="eyebrow">A LITTLE TEST OF HOW WELL YOU KNOW ME</p>
+      <h1>Ready to prove<br><em>you know your boy?</em></h1>
+      <p class="intro-copy">Six questions. One secret prize. No pressure… okay, maybe a little. 😏</p>
+      <button class="primary-btn" id="startBtn">Let's play <span>♥</span></button>
+      <p class="small-note">Be honest. I can tell when you're guessing. 👀</p>
+    </section>
+
+    <section class="quiz-card hidden" id="quiz" aria-live="polite">
+      <div class="quiz-meta">
+        <span id="questionCount">QUESTION 1 / 6</span>
+        <span id="progressText">0% complete</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="question-number" id="questionNumber">01</div>
+      <p class="eyebrow" id="questionEyebrow">LET'S SEE WHAT YOU KNOW</p>
+      <h2 id="questionText">What's my favourite food?</h2>
+      <label class="answer-label" for="answerInput">YOUR ANSWER</label>
+      <input id="answerInput" type="text" autocomplete="off" placeholder="Type your answer here..." />
+      <p class="hint" id="hint">One answer at a time, beautiful.</p>
+      <button class="primary-btn full" id="submitBtn">Lock in my answer <span>→</span></button>
+      <p class="small-note">Think carefully. You only need to get it right. ❤️</p>
+    </section>
+
+    <section class="win-card hidden" id="win">
+      <div class="win-glow"></div>
+      <p class="eyebrow">YOU DID IT, BABY</p>
+      <h2>Well, look at you. <em>Perfect score.</em></h2>
+      <p class="win-copy">Six out of six. You really do know me. Your prize is waiting… ❤️</p>
+      <div class="prize-frame" id="prizeFrame">
+        <img id="prizeImage" src="us.png" alt="Your prize" />
+        <div class="image-fallback hidden" id="imageFallback">
+          <span>♥</span>
+          <p>Add your <strong>us.png</strong> photo to this folder to reveal the prize.</p>
+        </div>
+      </div>
+      <p class="notify-copy">And now, let me know you made it all the way here.</p>
+      <a class="primary-btn whatsapp-btn" id="whatsappBtn" href="#" target="_blank" rel="noopener">
+        Tell Bruce on WhatsApp <span>♥</span>
+      </a>
+      <p class="small-note">WhatsApp will open with a message ready. Tap <b>Send</b> to notify him.</p>
+    </section>
+
+    <div class="toast hidden" id="toast" role="status"></div>
+    <footer>MADE WITH A LITTLE TOO MUCH LOVE <span>♥</span></footer>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
