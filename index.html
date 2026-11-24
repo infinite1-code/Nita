@@ -278,6 +278,21 @@ background:linear-gradient(90deg,var(--rose),var(--gold));
 transition:width .35s
 }
 
+.music-toggle{
+position:absolute;
+right:35px;
+top:35px;
+border:1px solid #75546266;
+background:#120e14aa;
+color:#b994a1;
+border-radius:50%;
+width:36px;
+height:36px;
+font:15px Inter;
+cursor:pointer;
+z-index:5
+}
+
 @media(max-height:650px){
 .scene{padding-top:28px;padding-bottom:25px}
 .middle{gap:12px;padding:15px 0}
@@ -303,6 +318,10 @@ transition-duration:.01ms!important
 
 <div class="ambient" id="ambient"></div>
 <div class="progress" id="progress"></div>
+
+<button class="music-toggle" id="musicToggle"
+aria-label="Toggle background music"
+title="Toggle music">♫̸</button>
 
 <main class="scene" id="scene" aria-live="polite">
 
@@ -338,19 +357,25 @@ const progress = $('progress');
 
 let index = 0;
 let typingTimer = null;
+let musicOn = false;
+let finalSceneReached = false;
 
 const music = $('backgroundMusic');
 music.volume = 0.2;
 
 const total = 15;
 
+// Story scenes
 const scenes = [
 
 {
 text:'Can I tell you a story?',
 face:'🥺',
 buttons:[
-['YES, TELL ME ❤️',()=>go(1)],
+['YES, TELL ME ❤️',()=>{
+    startMusic();
+    go(1);
+}],
 ['No 😒',()=>go(0,'plea')]
 ]
 },
@@ -531,11 +556,14 @@ ornament().replace(
 )
 );
 
-// Stop music immediately upon reaching the final scene
+// Stop music as soon as the final scene is reached
 if(item.slow){
 
+finalSceneReached=true;
 music.pause();
 music.currentTime=0;
+musicOn=false;
+$('musicToggle').textContent='♫̸';
 
 }
 
@@ -564,19 +592,7 @@ controls.appendChild(b);
 
 }
 
-else if(item.next!==undefined && which!==scenes.length-1){
-
-addNextButton(item.next);
-
-}
-
-}
-);
-
-// Final scene: slower typing, no replay button
-if(item.slow){
-
-typeText(text,item.text,150,()=>{
+else if(item.slow){
 
 const end=document.createElement('div');
 
@@ -585,9 +601,16 @@ end.textContent='(x0.5)';
 
 controls.appendChild(end);
 
-});
+}
+
+else if(item.next!==undefined && which!==scenes.length-1){
+
+addNextButton(item.next);
 
 }
+
+}
+);
 
 }
 
@@ -604,39 +627,49 @@ scene.classList.remove('leaving');
 
 }
 
-// Try to start music immediately on page entry
-function startMusic(){
+// Background music
+async function startMusic(){
 
-music.play().catch(()=>{
+if(finalSceneReached || scenes[index]?.slow){
+return;
+}
 
-// Browser may require a user interaction before allowing audio.
-// Retry on the first interaction if autoplay was blocked.
-const resumeMusic=()=>{
+try{
 
-music.play().catch(()=>{});
+await music.play();
 
-document.removeEventListener('click',resumeMusic);
-document.removeEventListener('touchstart',resumeMusic);
+musicOn=true;
+$('musicToggle').textContent='♫';
 
-};
+}catch(error){
 
-document.addEventListener('click',resumeMusic);
-document.addEventListener('touchstart',resumeMusic);
-
-});
+musicOn=false;
+$('musicToggle').textContent='♫̸';
 
 }
 
-window.addEventListener('load',startMusic);
+}
 
-// Also attempt playback as soon as the audio element is ready
-music.addEventListener('canplay',()=>{
+// Music toggle button
+$('musicToggle').addEventListener('click',async()=>{
 
-if(!music.paused && music.currentTime===0)return;
+if(finalSceneReached || scenes[index]?.slow){
+return;
+}
 
-music.play().catch(()=>{});
+if(!music.paused){
 
-},{once:true});
+music.pause();
+musicOn=false;
+$('musicToggle').textContent='♫̸';
+
+}else{
+
+await startMusic();
+
+}
+
+});
 
 makeStars();
 render(0);
@@ -645,5 +678,4 @@ render(0);
 </script>
 
 </body>
-  </html>
-  
+</html>
