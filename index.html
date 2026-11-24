@@ -278,21 +278,6 @@ background:linear-gradient(90deg,var(--rose),var(--gold));
 transition:width .35s
 }
 
-.music-toggle{
-position:absolute;
-right:35px;
-top:35px;
-border:1px solid #75546266;
-background:#120e14aa;
-color:#b994a1;
-border-radius:50%;
-width:36px;
-height:36px;
-font:15px Inter;
-cursor:pointer;
-z-index:5
-}
-
 @media(max-height:650px){
 .scene{padding-top:28px;padding-bottom:25px}
 .middle{gap:12px;padding:15px 0}
@@ -318,10 +303,6 @@ transition-duration:.01ms!important
 
 <div class="ambient" id="ambient"></div>
 <div class="progress" id="progress"></div>
-
-<button class="music-toggle" id="musicToggle"
-aria-label="Toggle background music"
-title="Toggle music">♫</button>
 
 <main class="scene" id="scene" aria-live="polite">
 
@@ -357,14 +338,12 @@ const progress = $('progress');
 
 let index = 0;
 let typingTimer = null;
-let musicOn = false;
 
 const music = $('backgroundMusic');
 music.volume = 0.2;
 
 const total = 15;
 
-// Story scenes
 const scenes = [
 
 {
@@ -552,13 +531,11 @@ ornament().replace(
 )
 );
 
-// Stop music as soon as the final scene is reached
+// Stop music immediately upon reaching the final scene
 if(item.slow){
 
 music.pause();
 music.currentTime=0;
-musicOn=false;
-$('musicToggle').textContent='♫̸';
 
 }
 
@@ -627,58 +604,39 @@ scene.classList.remove('leaving');
 
 }
 
-// Background music
-async function startMusic(){
+// Try to start music immediately on page entry
+function startMusic(){
 
-try{
+music.play().catch(()=>{
 
-await music.play();
+// Browser may require a user interaction before allowing audio.
+// Retry on the first interaction if autoplay was blocked.
+const resumeMusic=()=>{
 
-musicOn=true;
-$('musicToggle').textContent='♫';
+music.play().catch(()=>{});
 
-}catch(error){
+document.removeEventListener('click',resumeMusic);
+document.removeEventListener('touchstart',resumeMusic);
 
-musicOn=false;
+};
 
-}
-
-}
-
-// Attempt autoplay when the website loads
-window.addEventListener('load',()=>{
-
-startMusic();
+document.addEventListener('click',resumeMusic);
+document.addEventListener('touchstart',resumeMusic);
 
 });
 
-// Start music on first interaction if autoplay was blocked
-document.addEventListener('click',()=>{
-
-if(!musicOn){
-
-startMusic();
-
 }
+
+window.addEventListener('load',startMusic);
+
+// Also attempt playback as soon as the audio element is ready
+music.addEventListener('canplay',()=>{
+
+if(!music.paused && music.currentTime===0)return;
+
+music.play().catch(()=>{});
 
 },{once:true});
-
-// Music toggle button
-$('musicToggle').addEventListener('click',async()=>{
-
-if(!music.paused){
-
-music.pause();
-musicOn=false;
-$('musicToggle').textContent='♫̸';
-
-}else{
-
-await startMusic();
-
-}
-
-});
 
 makeStars();
 render(0);
