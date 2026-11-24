@@ -28,7 +28,7 @@ button,input{font:inherit}
 .ornament{width:min(230px,65vw);height:52px;color:var(--gold);opacity:.85}
 .ornament.bottom{transform:rotate(180deg)}
 .story{font-size:clamp(32px,7.8vw,57px);line-height:1.17;font-weight:500;letter-spacing:.005em;color:var(--cream);max-width:650px;text-wrap:balance;min-height:1.2em}
-.story.script{font-family:'Great Vibes',cursive;font-size:clamp(45px,10vw,76px);font-weight:400;color:var(--rose2);line-height:1.15}
+.story.script{font-family:'Cormorant Garamond',serif;font-size:clamp(36px,8vw,62px);font-weight:600;color:var(--rose2);line-height:1.15;letter-spacing:.01em}
 .story .rose{color:var(--rose2);font-style:italic}
 .expression{font-size:clamp(52px,13vw,84px);line-height:1;filter:drop-shadow(0 0 18px rgba(201,142,158,.2));animation:pop .65s cubic-bezier(.2,.8,.2,1) both}
 @keyframes pop{0%{transform:scale(.5) rotate(-9deg);opacity:0}75%{transform:scale(1.12) rotate(3deg)}100%{transform:scale(1);opacity:1}}
@@ -71,27 +71,26 @@ button,input{font:inherit}
   const $ = id => document.getElementById(id);
   const scene = $('scene'), middle = $('middle'), controls = $('controls');
   const counter = $('counter'), progress = $('progress');
-  let index = 0, herName = 'you', typingTimer = null, audioCtx = null, musicOn = false;
-  const total = 16;
+  let index = 0, typingTimer = null, audioCtx = null, musicOn = false;
+  const total = 15;
 
   // Each scene gets its own full-screen moment.
   const scenes = [
-    {text:'Can I tell you a story?', face:'🥺', buttons:[['YES, TELL ME ❤️',()=>go(1)],['No 😒',()=>go(0,'plea')]], noBranch:true},
+    {text:'Can I tell you a story?', face:'🥺', buttons:[['YES, TELL ME ❤️',()=>go(1)],['No 😒',()=>go(0,'plea')]]},
     {text:'There is this beautiful, amazing girl...', face:'🌹', next:2},
-    {text:'Her name is', blank:true, next:3},
-    {text:'And she is MIIIIINE!', face:'😏', next:4, script:true},
+    {text:'Her name is Chechemo.', face:'💗', next:3},
+    {text:'And Chechemo is MIIIIINE!', face:'😏', next:4, emphasis:true},
     {text:'Sorry... where was I?', face:'😇', next:5},
     {text:'Yeah. This girl...', face:'❤️', next:6},
     {text:'Sometimes she can be crazy...', face:'🤪', next:7},
     {text:'Sometimes she can be so, so sweet.', face:'🥰', next:8},
     {text:'Oh, and her man misses her sooo much.', face:'🥺', next:9},
-    {text:'Oh! And her man loves eating meat.', face:'😅', next:10},
+    {text:'Oh, and her man loves eating meat.', face:'😅', next:10},
     {text:'Right now, her man wants to hug her...', face:'🫂', next:11},
-    {text:'...and fall asleep in her arms.', face:'💗', next:12},
-    {text:'ON HER KIFUAAAAAA! 😝', face:'🙈', next:13, script:true},
-    {text:'Sorry.', face:'🥹', next:14},
-    {text:'Weeeee! Story imeisha!', face:'😂', next:15},
-    {text:'Ru o lakwani...', face:'❤️', next:16, script:true}
+    {text:'...and fall asleep in her arms, on her KIFUAAAAAA!', face:'🙈', next:12, emphasis:true},
+    {text:'Sorry.', face:'🥹', next:13},
+    {text:'Weeeee! Story imeisha!', face:'😂', next:14},
+    {text:'Ru o lakwani...', face:'❤️', next:15, slow:true}
   ];
 
   function makeStars(){
@@ -133,41 +132,46 @@ button,input{font:inherit}
     progress.style.width=(Math.min(which+1,total)/total*100)+'%';
     middle.innerHTML=''; controls.innerHTML='';
     middle.insertAdjacentHTML('beforeend',ornament());
+
     const text=document.createElement('div');
     text.className='story'+(item.script?' script':'');
     middle.appendChild(text);
-    if(item.blank){
-      typeText(text,item.text,55,()=>{
-        const form=document.createElement('form'); form.className='name-form';
-        const input=document.createElement('input'); input.placeholder='Her beautiful name...'; input.maxLength=32; input.required=true; input.autocomplete='off'; input.setAttribute('aria-label','Her name');
-        const btn=document.createElement('button'); btn.className='btn'; btn.textContent='SAVE';
-        form.append(input,btn); controls.appendChild(form);
-        input.focus();
-        form.onsubmit=e=>{e.preventDefault();herName=input.value.trim()||'you';go(3);};
-      });
-    } else {
-      typeText(text,item.text, item.script?62:48,()=>{
-        if(item.buttons){
-          item.buttons.forEach(([label,action])=>{
-            const b=document.createElement('button'); b.className='btn'+(label.startsWith('No')?' secondary':''); b.textContent=label; b.onclick=action; controls.appendChild(b);
-          });
-        } else if(item.next!==undefined){
-          addNextButton(item.next);
-        }
-      });
-    }
+
     if(item.face){
-      const face=document.createElement('div'); face.className='expression'; face.textContent=item.face; middle.appendChild(face);
+      const face=document.createElement('div');
+      face.className='expression';
+      face.textContent=item.face;
+      middle.appendChild(face);
     }
-    if(item.sub){const sub=document.createElement('div');sub.className='subtle';sub.textContent=item.sub;middle.appendChild(sub);}
-    middle.appendChild(Object.assign(document.createElement('div'),{className:'ornament bottom',innerHTML:ornament().replace('class="ornament"','')}));
-    if(which===2) { /* name prompt is inserted after typing */ }
-    if(which===3){text.innerHTML='';typeText(text,`And ${herName} is MIIIIINE!`,58,()=>addNextButton(4));}
-    if(which===15){
-      // The final line gets the deliberately slowed-down delivery.
-      text.innerHTML='';typeText(text,'Ru o lakwani...',150,()=>{
-        const end=document.createElement('div');end.className='subtle';end.textContent='(x0.5)';controls.appendChild(end);
-        const restart=document.createElement('button');restart.className='btn';restart.textContent='READ IT AGAIN ↺';restart.onclick=()=>{herName='you';go(0);};controls.appendChild(restart);
+    if(item.sub){
+      const sub=document.createElement('div');
+      sub.className='subtle';
+      sub.textContent=item.sub;
+      middle.appendChild(sub);
+    }
+    middle.insertAdjacentHTML('beforeend',ornament().replace('class="ornament"','class="ornament bottom"'));
+
+    typeText(text,item.text,item.slow?150:(item.script?58:48),()=>{
+      if(item.buttons){
+        item.buttons.forEach(([label,action])=>{
+          const b=document.createElement('button');
+          b.className='btn'+(label.startsWith('No')?' secondary':'');
+          b.textContent=label;
+          b.onclick=action;
+          controls.appendChild(b);
+        });
+      } else if(item.next!==undefined && which!==scenes.length-1){
+        addNextButton(item.next);
+      }
+    });
+
+    if(item.slow){
+      // Slow, deliberate final line; no replay control at the end.
+      typeText(text,item.text,150,()=>{
+        const end=document.createElement('div');
+        end.className='subtle';
+        end.textContent='(x0.5)';
+        controls.appendChild(end);
       });
     }
   }
