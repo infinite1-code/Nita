@@ -327,7 +327,7 @@ title="Toggle music">♫̸</button>
 
 <div>
 <div class="topline">A little story for you</div>
-<div class="counter" id="counter">01 / 15</div>
+<div class="counter" id="counter">01 / 16</div>
 </div>
 
 <div class="middle" id="middle"></div>
@@ -363,7 +363,7 @@ let finalSceneReached = false;
 const music = $('backgroundMusic');
 music.volume = 0.2;
 
-const total = 15;
+const total = 16;
 
 // Story scenes
 const scenes = [
@@ -376,7 +376,10 @@ buttons:[
     startMusic();
     go(1);
 }],
-['No 😒',()=>go(0,'plea')]
+['No 😒',()=>{
+    startMusic();
+    go(0,'plea');
+}]
 ]
 },
 
@@ -384,7 +387,7 @@ buttons:[
 
 {text:'Her name is Chechemo.',face:'💗',next:3},
 
-{text:'And Chechemo is MIIIIINE!',face:'😏',next:4,emphasis:true},
+{text:'And Chechemo is MIIIIINE!',face:'😈😈😈',next:4,emphasis:true},
 
 {text:'Sorry... where was I?',face:'😇',next:5},
 
@@ -396,6 +399,7 @@ buttons:[
 
 {text:'Oh, and her man misses her sooo much.',face:'🥺',next:9},
 
+
 {text:'Oh, and her man loves eating meat.',face:'😅',next:10},
 
 {text:'Right now, her man wants to hug her...',face:'🫂',next:11},
@@ -406,7 +410,7 @@ buttons:[
 
 {text:'Weeeee! Story imeisha!',face:'😂',next:14},
 
-{text:'Ru o lakwani...',face:'❤️',next:15,slow:true}
+{text:'Ru o lakwani...',face:'❤️',slow:true}
 
 ];
 
@@ -486,6 +490,12 @@ hint.className='tap';
 hint.textContent='take your time';
 
 controls.appendChild(hint);
+
+}
+
+function finishStory(){
+
+window.location.href='https://wa.me/254117425581';
 
 }
 
@@ -594,6 +604,14 @@ controls.appendChild(b);
 
 else if(item.slow){
 
+const finish=document.createElement('button');
+
+finish.className='btn';
+finish.textContent='FINISH ❤️';
+finish.onclick=finishStory;
+
+controls.appendChild(finish);
+
 const end=document.createElement('div');
 
 end.className='subtle';
@@ -603,7 +621,7 @@ controls.appendChild(end);
 
 }
 
-else if(item.next!==undefined && which!==scenes.length-1){
+else if(item.next!==undefined){
 
 addNextButton(item.next);
 
