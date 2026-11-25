@@ -327,7 +327,7 @@ title="Toggle music">♫̸</button>
 
 <div>
 <div class="topline">A little story for you</div>
-<div class="counter" id="counter">01 / 16</div>
+<div class="counter" id="counter">01 / 15</div>
 </div>
 
 <div class="middle" id="middle"></div>
@@ -358,12 +358,11 @@ const progress = $('progress');
 let index = 0;
 let typingTimer = null;
 let musicOn = false;
-let finalSceneReached = false;
 
 const music = $('backgroundMusic');
 music.volume = 0.2;
 
-const total = 16;
+const total = 15;
 
 // Story scenes
 const scenes = [
@@ -387,7 +386,7 @@ buttons:[
 
 {text:'Her name is Chechemo.',face:'💗',next:3},
 
-{text:'And Chechemo is MIIIIINE!',face:'😈😈😈',next:4,emphasis:true},
+{text:'And Chechemo is MIIIIINE!',face:'😈😈',next:4,emphasis:true},
 
 {text:'Sorry... where was I?',face:'😇',next:5},
 
@@ -398,7 +397,6 @@ buttons:[
 {text:'Sometimes she can be so, so sweet.',face:'🥰',next:8},
 
 {text:'Oh, and her man misses her sooo much.',face:'🥺',next:9},
-
 
 {text:'Oh, and her man loves eating meat.',face:'😅',next:10},
 
@@ -566,17 +564,6 @@ ornament().replace(
 )
 );
 
-// Stop music as soon as the final scene is reached
-if(item.slow){
-
-finalSceneReached=true;
-music.pause();
-music.currentTime=0;
-musicOn=false;
-$('musicToggle').textContent='♫̸';
-
-}
-
 // Typewriter effect
 typeText(
 text,
@@ -648,10 +635,6 @@ scene.classList.remove('leaving');
 // Background music
 async function startMusic(){
 
-if(finalSceneReached || scenes[index]?.slow){
-return;
-}
-
 try{
 
 await music.play();
@@ -670,10 +653,6 @@ $('musicToggle').textContent='♫̸';
 
 // Music toggle button
 $('musicToggle').addEventListener('click',async()=>{
-
-if(finalSceneReached || scenes[index]?.slow){
-return;
-}
 
 if(!music.paused){
 
@@ -696,4 +675,5 @@ render(0);
 </script>
 
 </body>
-</html>
+    </html>
+    
